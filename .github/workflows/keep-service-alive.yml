@@ -20,7 +20,7 @@ jobs:
           RESPONSE=$(curl -s "https://medium.kashyapprojects.workers.dev")
           echo "Response: $RESPONSE"
           
-          if echo "$RESPONSE" | grep -q "All Systems Operational"; then
+          if echo "$RESPONSE" | grep -q "Hello Hono!"; then
             echo "✅ Cloudflare is UP"
           else
             echo "⚠️ Cloudflare might be DOWN"
