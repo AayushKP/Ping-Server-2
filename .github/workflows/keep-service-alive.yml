@@ -2,17 +2,27 @@ name: Cloudflare Status Check
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # Runs every 5 minutes
-  workflow_dispatch: # Allows manual execution
+    - cron: "4/5 * * * *"  # Runs every 5 minutes with a 4-minute offset
+  workflow_dispatch:  # Allows manual execution
 
 jobs:
   check-status:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read  # Ensure the workflow can execute
+
     steps:
+      - name: Print Execution Time
+        run: echo "Running Cloudflare Status Check at $(date -u)"
+
       - name: Check Cloudflare Status
         run: |
-          if curl -s "medium.kashyapprojects.workers.dev" | grep -q "All Systems Operational"; then
-            echo "Cloudflare is UP"
+          RESPONSE=$(curl -s "https://medium.kashyapprojects.workers.dev")
+          echo "Response: $RESPONSE"
+          
+          if echo "$RESPONSE" | grep -q "All Systems Operational"; then
+            echo "✅ Cloudflare is UP"
           else
-            echo "Cloudflare might be DOWN"
+            echo "⚠️ Cloudflare might be DOWN"
+            exit 1  # Fail the workflow if Cloudflare is down
           fi
